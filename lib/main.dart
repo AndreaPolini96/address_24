@@ -13,10 +13,17 @@ void main() {
   ));
 }
 
-class HomeListViewScreen extends StatelessWidget {
+class HomeListViewScreen extends StatefulWidget {
   HomeListViewScreen({super.key});
 
+  @override
+  State<HomeListViewScreen> createState() => _HomeListViewScreenState();
+}
+
+class _HomeListViewScreenState extends State<HomeListViewScreen> {
   final people = PeopleService().getPeople().toList();
+
+  int _currentIndex = 0;
 
   ListTile _buildListTile(Person p) {
     return ListTile(
@@ -32,11 +39,27 @@ class HomeListViewScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView(
-        children: people.map(_buildListTile).toList(),
-      ),
+      bottomNavigationBar: BottomNavigationBar(
+          onTap: (index) {
+            setState(() {
+              _currentIndex = index;
+            });
+          },
+          currentIndex: _currentIndex,
+          selectedItemColor: Colors.green,
+          items: const [
+            BottomNavigationBarItem(
+                icon: Icon(Icons.list_rounded), label: "List"),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.favorite_rounded), label: "Favorite")
+          ]),
+      body: _currentIndex == 0
+          ? ListView(
+              children: people.map(_buildListTile).toList(),
+            )
+          : Center(
+              child: Text("Hello"),
+            ),
     );
   }
-
-  // ListTile newMethod(e) => _buildListTile(p: e);
 }
