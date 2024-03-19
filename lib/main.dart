@@ -15,7 +15,6 @@ void main() {
 
 class HomeListViewScreen extends StatefulWidget {
   HomeListViewScreen({super.key});
-
   @override
   State<HomeListViewScreen> createState() => _HomeListViewScreenState();
 }
