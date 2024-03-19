@@ -16,8 +16,11 @@ class ContactListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       onTap: onTap,
-      leading: CircleAvatar(
-        backgroundImage: NetworkImage(p.picture!.thumbnail!),
+      leading: Hero(
+        tag: p.id!,
+        child: CircleAvatar(
+          backgroundImage: NetworkImage(p.picture!.thumbnail!),
+        ),
       ),
       title: Text(p.firstName!),
       subtitle: Text(p.cell!),

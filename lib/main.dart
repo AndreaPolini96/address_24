@@ -1,9 +1,8 @@
-import 'dart:math';
-
 import 'package:address_24/models/person.dart';
 import 'package:address_24/services/people_service.dart';
 import 'package:address_24/services/services.dart';
 import 'package:address_24/widgets/like_button.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -12,6 +11,7 @@ import 'widgets/contact_list_item.dart';
 
 void main() {
   runApp(MaterialApp(
+    debugShowCheckedModeBanner: false,
     home: SafeArea(child: HomeListViewScreen()),
   ));
 }
@@ -75,9 +75,7 @@ class _HomeListViewScreenState extends State<HomeListViewScreen> {
               onTileTapped: (p) {
                 Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) {
-                    return Center(
-                      child: Text("Hello new page"),
-                    );
+                    return PersonDetailsScreen(person: p);
                   },
                 ));
               },
@@ -127,5 +125,46 @@ class ContactListView extends StatelessWidget {
               trailing: LikeButton(
                   favorite: isFavorite(p.id), onPressed: () => onPressed(p)));
         });
+  }
+}
+
+class PersonDetailsScreen extends StatefulWidget {
+  const PersonDetailsScreen({
+    super.key,
+    required this.person,
+  });
+
+  final Person person;
+
+  @override
+  State<PersonDetailsScreen> createState() => _PersonDetailsScreenState();
+}
+
+class _PersonDetailsScreenState extends State<PersonDetailsScreen> {
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(widget.person.firstName!),
+        ),
+        body: Column(
+          children: [
+            Hero(
+              tag: widget.person.id!,
+              child: Image.network(
+                widget.person.picture!.large!,
+              ),
+            ),
+            Center(
+              child: Text(
+                widget.person.email!,
+                style: TextStyle(fontSize: 42),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
   }
 }
