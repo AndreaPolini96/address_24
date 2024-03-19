@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:address_24/models/person.dart';
 import 'package:address_24/services/people_service.dart';
+import 'package:address_24/widgets/like_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -21,7 +22,13 @@ class HomeListViewScreen extends StatefulWidget {
 }
 
 class _HomeListViewScreenState extends State<HomeListViewScreen> {
-  final people = PeopleService().getPeople().toList();
+  final people = PeopleService()
+      .getPeople(results: 100)
+      .where((e) => e.id != null)
+      .toList();
+
+  List<Person> _favoritePeople = [];
+  final _favorite = [];
 
   int _currentIndex = 0;
 
@@ -32,7 +39,20 @@ class _HomeListViewScreenState extends State<HomeListViewScreen> {
       ),
       title: Text(p.firstName!),
       subtitle: Text(p.cell!),
-      trailing: Icon(Icons.favorite_border),
+      trailing: LikeButton(
+          favorite: _favorite.contains(p.id),
+          onPressed: () {
+            setState(() {
+              if (_favorite.contains(p.id)) {
+                _favorite.remove(p.id);
+              } else {
+                _favorite.add(p.id);
+              }
+
+              _favoritePeople =
+                  people.where((e) => _favorite.contains(e.id)).toList();
+            });
+          }),
     );
   }
 
@@ -54,11 +74,16 @@ class _HomeListViewScreenState extends State<HomeListViewScreen> {
                 icon: Icon(Icons.favorite_rounded), label: "Favorite")
           ]),
       body: _currentIndex == 0
-          ? ListView(
-              children: people.map(_buildListTile).toList(),
-            )
-          : Center(
-              child: Text("Hello"),
+          ? ListView.builder(
+              itemCount: people.length,
+              itemBuilder: (context, index) {
+                return _buildListTile(people[index]);
+              })
+          : ListView.builder(
+              itemCount: _favoritePeople.length,
+              itemBuilder: (context, index) {
+                return _buildListTile(_favoritePeople[index]);
+              },
             ),
     );
   }
